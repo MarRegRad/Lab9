@@ -1,0 +1,118 @@
+from tkinter import *
+import tkinter.messagebox as MessageBox
+
+
+def validate_registration(): #Функция проверяет введенные пользователем данные при регистрации
+    username = username_entry.get()
+    password = password_entry.get()
+    confirm_password = confirm_password_entry.get()
+
+    if username == "":
+        MessageBox.showinfo("Ошибка", "Введите логин")
+    elif password == "":
+        MessageBox.showinfo("Ошибка", "Введите пароль")
+    elif confirm_password == "":
+        MessageBox.showinfo("Ошибка", "Введите подтверждение пароля")
+    elif password != confirm_password:
+        MessageBox.showinfo("Ошибка", "Пароль и подтверждение пароля не совпадают")
+    else:
+        save_registration(username, password)
+
+def save_registration(username, password): #Функция открывает файл "data.txt" в режиме добавления и записывает в него логин и пароль пользователя
+    file = open("data.txt", "a")
+    file.write(username + "," + password + '\n')
+    file.close()
+
+    MessageBox.showinfo("Отлично", "Регистрация завершена")
+
+
+def control_log(): #Функция проверяет введенные пользователем данные при входе
+    username = username_entry.get()
+    password = password_entry.get()
+
+    if username == "":
+        MessageBox.showinfo("Ошибка", "Введите логин")
+    elif password == "":
+        MessageBox.showinfo("Ошибка", "Введите пароль")
+    else:
+        check_login(username, password)
+
+
+def check_login(username, password): #Функция открывает файл "data.txt" в режиме чтения и считывает все строки.
+                                     # Затем происходит поиск введенных логина и пароля в каждой строке файла
+    file = open("data.txt", "r")
+    lines = file.readlines()
+    file.close()
+
+    found = False
+    for line in lines:
+        user, passw = line.strip().split(",")
+        if user == username and passw == password:
+            found = True
+            break
+
+    if found:
+        MessageBox.showinfo("Отлично", "Вход выполнен")
+    else:
+        MessageBox.showinfo("Ошибка", "Данные для входа неверны")
+
+
+def register(): #Функция открывает новое окно регистрации
+    global username_entry, password_entry, confirm_password_entry
+
+    registration_window = Toplevel(root)
+    registration_window.title("Регистрация")
+    registration_window.geometry("450x230")
+    registration_window.resizable(width=False, height=False)
+    registration_window["bg"] = "black"
+
+    username_label = Label(registration_window, text="Имя пользователя", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
+    username_label.pack()
+
+    username_entry = Entry(registration_window, bg="black", fg="maroon2", font="Arial 12")
+    username_entry.pack()
+
+    password_label = Label(registration_window, text="Пароль", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
+    password_label.pack()
+
+    password_entry = Entry(registration_window, font="Arial 12", bg="black", fg="maroon2")
+    password_entry.pack()
+
+    confirm_password_label = Label(registration_window, text="Подтверждение пароля:", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
+    confirm_password_label.pack()
+
+    confirm_password_entry = Entry(registration_window, show="*", font=("Arial", 12))
+    confirm_password_entry.pack()
+
+    main_label = Button(registration_window, text="Зарегистрироваться", command=validate_registration)
+    main_label.pack()
+
+
+root = Tk()
+root.title("Авторизация")
+root.geometry("500x300")
+root.resizable(width=False, height=False)
+root["bg"] = "black"
+
+main_label = Label(root, text="Авторизация", font="Arial 15 bold", bg="black", fg="white")
+main_label.pack()
+
+username_label = Label(root, text="Имя пользователя", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
+username_label.pack()
+
+username_entry = Entry(root, bg="black", fg="deep pink", font="Arial 12")
+username_entry.pack()
+
+password_label = Label(root, text="Пароль", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
+password_label.pack()
+
+password_entry = Entry(root, font="Arial 12", bg="black", fg="deep pink")
+password_entry.pack()
+
+button_login = Button(root, text="Войти", command=control_log)
+button_login.pack()
+
+main_label = Button(root, text="Регистрация", command=register)
+main_label.pack()
+
+root.mainloop()
