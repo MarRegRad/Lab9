@@ -1,118 +1,137 @@
 from tkinter import *
-import tkinter.messagebox as MessageBox
+import os
 
+def register():  #Окно регистрации
+    global register_screen
+    register_screen = Toplevel(main_screen)
+    register_screen.title("Регистрация")
+    register_screen.geometry("450x400")
 
-def validate_registration(): #Функция проверяет введенные пользователем данные при регистрации
-    username = username_entry.get()
-    password = password_entry.get()
-    confirm_password = confirm_password_entry.get()
+    global username
+    global password
+    global username_entry
+    global password_entry
+    username = StringVar()
+    password = StringVar()
 
-    if username == "":
-        MessageBox.showinfo("Ошибка", "Введите логин")
-    elif password == "":
-        MessageBox.showinfo("Ошибка", "Введите пароль")
-    elif confirm_password == "":
-        MessageBox.showinfo("Ошибка", "Введите подтверждение пароля")
-    elif password != confirm_password:
-        MessageBox.showinfo("Ошибка", "Пароль и подтверждение пароля не совпадают")
-    else:
-        save_registration(username, password)
-
-def save_registration(username, password): #Функция открывает файл "data.txt" в режиме добавления и записывает в него логин и пароль пользователя
-    file = open("data.txt", "a")
-    file.write(username + "," + password + '\n')
-    file.close()
-
-    MessageBox.showinfo("Отлично", "Регистрация завершена")
-
-
-def control_log(): #Функция проверяет введенные пользователем данные при входе
-    username = username_entry.get()
-    password = password_entry.get()
-
-    if username == "":
-        MessageBox.showinfo("Ошибка", "Введите логин")
-    elif password == "":
-        MessageBox.showinfo("Ошибка", "Введите пароль")
-    else:
-        check_login(username, password)
-
-
-def check_login(username, password): #Функция открывает файл "data.txt" в режиме чтения и считывает все строки.
-                                     # Затем происходит поиск введенных логина и пароля в каждой строке файла
-    file = open("data.txt", "r")
-    lines = file.readlines()
-    file.close()
-
-    found = False
-    for line in lines:
-        user, passw = line.strip().split(",")
-        if user == username and passw == password:
-            found = True
-            break
-
-    if found:
-        MessageBox.showinfo("Отлично", "Вход выполнен")
-    else:
-        MessageBox.showinfo("Ошибка", "Данные для входа неверны")
-
-
-def register(): #Функция открывает новое окно регистрации
-    global username_entry, password_entry, confirm_password_entry
-
-    registration_window = Toplevel(root)
-    registration_window.title("Регистрация")
-    registration_window.geometry("450x230")
-    registration_window.resizable(width=False, height=False)
-    registration_window["bg"] = "black"
-
-    username_label = Label(registration_window, text="Имя пользователя", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
-    username_label.pack()
-
-    username_entry = Entry(registration_window, bg="black", fg="maroon2", font="Arial 12")
+    Label(register_screen, text="Пожалуйста, введите информацию", bg="black", fg="white", font=("Arial", 11)).pack()
+    Label(register_screen, text="").pack()
+    username_lable = Label(register_screen, text="Логин")
+    username_lable.pack()
+    username_entry = Entry(register_screen, textvariable=username)
     username_entry.pack()
-
-    password_label = Label(registration_window, text="Пароль", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
-    password_label.pack()
-
-    password_entry = Entry(registration_window, font="Arial 12", bg="black", fg="maroon2")
+    password_lable = Label(register_screen, text="Пароль * ")
+    password_lable.pack()
+    password_entry = Entry(register_screen, textvariable=password, show='*')
     password_entry.pack()
+    Label(register_screen, text="").pack()
+    Button(register_screen, text="Регистрация", width=15, height=2, bg="black", fg="white", font=("Arial", 11), command=register_user).pack()
 
-    confirm_password_label = Label(registration_window, text="Подтверждение пароля:", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
-    confirm_password_label.pack()
+def login():  #Окно входа
+    global login_screen
+    login_screen = Toplevel(main_screen)
+    login_screen.title("Вход")
+    login_screen.geometry("450x400")
+    Label(login_screen, text="Введите данные, чтобы войти", bg="black", fg="white", font=("Arial", 11)).pack()
+    Label(login_screen, text="").pack()
 
-    confirm_password_entry = Entry(registration_window, show="*", font=("Arial", 12))
-    confirm_password_entry.pack()
+    global username_verify
+    global password_verify
 
-    main_label = Button(registration_window, text="Зарегистрироваться", command=validate_registration)
-    main_label.pack()
+    username_verify = StringVar()
+    password_verify = StringVar()
+
+    global username_login_entry
+    global password_login_entry
+
+    Label(login_screen, text="Логин ").pack()
+    username_login_entry = Entry(login_screen, textvariable=username_verify)
+    username_login_entry.pack()
+    Label(login_screen, text="").pack()
+    Label(login_screen, text="Пароль * ").pack()
+    password_login_entry = Entry(login_screen, textvariable=password_verify, show='*')
+    password_login_entry.pack()
+    Label(login_screen, text="").pack()
+    Button(login_screen, text="Войти", width=15, height=2, bg="black", fg="white", font=("Arial", 11), command=login_verify).pack()
+
+def register_user(): #Что происходит при нажатии кнопки регистрации
+    username_info = username.get()
+    password_info = password.get()
+
+    file = open(username_info, "w")
+    file.write(username_info + "\n")
+    file.write(password_info)
+    file.close()
+
+    username_entry.delete(0, END)
+    password_entry.delete(0, END)
+
+    Label(register_screen, text="Регистрация прошла успешно", fg="blue", font=("Arial", 11)).pack()
+
+def login_verify(): #Что происходит при нажатии кнопки входа
+    username1 = username_verify.get()
+    password1 = password_verify.get()
+    username_login_entry.delete(0, END)
+    password_login_entry.delete(0, END)
+
+    list_of_files = os.listdir()
+    if username1 in list_of_files:
+        file1 = open(username1, "r")
+        verify = file1.read().splitlines()
+        if password1 in verify:
+            login_sucess()
+
+        else:
+            password_not_recognised()
+
+    else:
+        user_not_found()
+
+def login_sucess(): #Всплывающее окно успешного входа
+    global login_success_screen
+    login_success_screen = Toplevel(login_screen)
+    login_success_screen.title("Успешно")
+    login_success_screen.geometry("200x150")
+    Label(login_success_screen, text="Вход выполнен успешно").pack()
+    Button(login_success_screen, text="OK", command=delete_login_success).pack()
+
+def password_not_recognised(): #Всплывающее окно для входа с неверным паролем
+    global password_not_recog_screen
+    password_not_recog_screen = Toplevel(login_screen)
+    password_not_recog_screen.title("Успешно")
+    password_not_recog_screen.geometry("200x150")
+    Label(password_not_recog_screen, text="Неверный пароль").pack()
+    Button(password_not_recog_screen, text="OK", command=delete_password_not_recognised).pack()
+
+def user_not_found():  #Всплывающее окно для пользователя, который не найден
+    global user_not_found_screen
+    user_not_found_screen = Toplevel(login_screen)
+    user_not_found_screen.title("Успешно")
+    user_not_found_screen.geometry("200x150")
+    Label(user_not_found_screen, text="Пользователь не найден").pack()
+    Button(user_not_found_screen, text="OK", command=delete_user_not_found_screen).pack()
+
+def delete_login_success():
+    login_success_screen.destroy()
 
 
-root = Tk()
-root.title("Авторизация")
-root.geometry("500x300")
-root.resizable(width=False, height=False)
-root["bg"] = "black"
+def delete_password_not_recognised():
+    password_not_recog_screen.destroy()
 
-main_label = Label(root, text="Авторизация", font="Arial 15 bold", bg="black", fg="white")
-main_label.pack()
 
-username_label = Label(root, text="Имя пользователя", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
-username_label.pack()
+def delete_user_not_found_screen():
+    user_not_found_screen.destroy()
 
-username_entry = Entry(root, bg="black", fg="deep pink", font="Arial 12")
-username_entry.pack()
+def main_account_screen(): #Проектирование главного (первого) окна
+    global main_screen
+    main_screen = Tk()
+    main_screen.geometry("500x300")
+    main_screen.title("Авторизация")
+    Label(text="Выберите один из вариантов", bg="black", fg="white", width="300", height="2", font=("Arial", 13)).pack()
+    Label(text="").pack()
+    Button(text="Войти", height="2", width="30", font=("Arial", 11), command=login).pack()
+    Label(text="").pack()
+    Button(text="Зарегистрироваться", height="2", width="30", font=("Arial", 11), command=register).pack()
 
-password_label = Label(root, text="Пароль", font="Arial 11 bold", bg="black", fg="white", padx=10, pady=8)
-password_label.pack()
-
-password_entry = Entry(root, font="Arial 12", bg="black", fg="deep pink")
-password_entry.pack()
-
-button_login = Button(root, text="Войти", command=control_log)
-button_login.pack()
-
-main_label = Button(root, text="Регистрация", command=register)
-main_label.pack()
-
-root.mainloop()
+    main_screen.mainloop()
+main_account_screen()
