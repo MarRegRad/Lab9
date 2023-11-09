@@ -1,17 +1,17 @@
-
 import os
-from tkinter import Tk, Toplevel, Label, Entry, Button, messagebox
+from tkinter import *
+from tkinter import messagebox
 
-def dismiss(win):
+def dismiss(win): #функция для закрытия окна
     win.grab_release()
     win.destroy()
 
-def init_file():
+def init_file(): #функция для инициализации файла пользователей, если он не существует
     if not os.path.exists('users.txt'):
         with open('users.txt', 'w'):
             pass
 
-def add_user(login: str, password: str) -> bool:
+def add_user(login: str, password: str) -> bool: #функция для добавления нового пользователя в файл пользователей
     with open('users.txt', 'r') as f:
         users = f.read().splitlines()
     for user in users:
@@ -23,7 +23,7 @@ def add_user(login: str, password: str) -> bool:
         f.write(f'{login}:{password}\n')
     return True
 
-def get_user(login: str, password: str) -> bool:
+def get_user(login: str, password: str) -> bool: #функция для проверки наличия пользователя с заданным логином и паролем в файле пользователей
     with open('users.txt', 'r') as f:
         users = f.read().splitlines()
 
@@ -51,7 +51,6 @@ def authorization():
                 print('Вы вошли в систему')
                 messagebox.showinfo('Вход', 'Вход выполнен успешно.\nВы вошли в систему.')
                 win.after(300, lambda: (win.destroy(), win.grab_release()))
-                # Добавьте ваш код для рисования игрового поля после успешной авторизации
             else:
                 print('Неверный логин или пароль')
                 messagebox.showwarning(title='Ошибка', message='Неверный логин или пароль')
